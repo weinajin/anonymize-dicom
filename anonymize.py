@@ -8,7 +8,6 @@ remove all the patient name info in the dicom image.
 
 import pydicom
 from pydicom.filereader import read_dicomdir
-from helper import file_plane
 import os
 from os.path import dirname, join
 import stat
@@ -292,7 +291,19 @@ def record_dicoms(folder_path, new_folder_path_str, cnvt_img = True):
 
 
 
-
+def file_plane(IOP):
+    """Get image plane from dicom.ImageOrientationPatient
+    ref: https://stackoverflow.com/questions/34782409/understanding-dicom-image-attributes-to-get-axial-coronal-sagittal-cuts
+    """
+    IOP_round = [round(x) for x in IOP]
+    plane = np.cross(IOP_round[0:3], IOP_round[3:6])
+    plane = [abs(x) for x in plane]
+    if plane[0] == 1:
+        return "Sagittal"
+    elif plane[1] == 1:
+        return "Coronal"
+    elif plane[2] == 1:
+        return "Axial"
 
 
 # def record_dicom(folder_path, new_folder_dir, remove_name = True, cnvt_img = True):
